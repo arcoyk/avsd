@@ -2,6 +2,7 @@ require "avsd/version"
 require "rubygems"
 require "sqlite3"
 require "matrix"
+require "priority_queue"
 
 module Avsd
 	def self.hello
@@ -22,6 +23,25 @@ class Matrix
 				self[col, row] = sum
 			end
 		end
+		self
+	end
+
+	def show
+		for col in 0..self.column_size - 1
+			for row in 0..self.row_size - 1
+				print self[row, col] == nil ? "n" : self[row, col]
+				print "  "
+			end
+			puts
+		end
+		self
+	end
+
+	def zero_diagonal
+		for col in 0..self.column_size - 1
+			self[col, col] = 0
+		end
+		self
 	end
 end
 
@@ -74,11 +94,27 @@ end
 
 
 mat = Matrix.unit(5)
-for row in 0..mat.row_size-1
-	for col in 0..mat.row_size-1
-		mat[row, col] = 1
+
+
+def dijkstra_all dist_mat
+	short_mat = Matrix.zero(dist_mat.column_size)
+	short_mat = short_mat.collect { |x| x = nil }
+	for s_id in 0..dist_mat.column_size - 1
+		q = PriorityQueue.new
+		q[s_id] = 0
+		while not q.empty?
+			puts q.inspect
+			f = q.delete_min
+			short_mat[s_id, f[0]] = f[1]
+			short_mat.show
+			dist_mat.row(f[0]).each_with_index do |val, i|
+				next if i == f[0] or val == 0 or short_mat[s_id, i] != nil
+				if q[i] == nil or q[i] > f[1] + val
+					q[i] = f[1] + val
+				end
+			end
+		end
 	end
+	short_mat
 end
-mat.fold
-puts mat
 
