@@ -118,3 +118,10 @@ def dijkstra_all dist_mat
 	short_mat
 end
 
+def sample short_mat, num
+	arr = Array.new(short_mat.column_size) { |idx| idx }
+	set = arr.sample(num)
+	set.
+end
+
+sample Matrix.unit(5), 3
