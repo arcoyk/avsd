@@ -6,13 +6,13 @@ require 'avsd/version'
 Gem::Specification.new do |spec|
   spec.name          = "avsd"
   spec.version       = Avsd::VERSION
-  spec.authors       = ["arcoyk"]
+
+  spec.authors       = ["Yui Kita"]
   spec.email         = ["yuikita21@gmail.com"]
 
-  spec.summary       = %q{fff}
-  spec.description   = %q{fff}
-  spec.homepage      = "http://list300.xyz"
-  spec.license       = "MIT"
+  spec.summary       = %q{ Avsd recommend engine }
+  spec.description   = %q{ Avsd recommends items based on input items. }
+  spec.homepage      = "http://list.xyz/avsdrecommend"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"

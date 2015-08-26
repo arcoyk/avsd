@@ -81,3 +81,4 @@ for row in 0..mat.row_size-1
 end
 mat.fold
 puts mat
+
