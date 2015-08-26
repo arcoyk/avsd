@@ -1,8 +1,29 @@
-require "avsd/version"
 require "rubygems"
 require "sqlite3"
 require "matrix"
 require "priority_queue"
+
+module Enumerable
+
+    def sum
+      self.reduce { |accum, i| accum + i }
+    end
+
+    def mean
+      self.sum / self.length.to_f
+    end
+
+    def sample_variance
+      m = self.mean
+      sum = self.reduce { |accum, i| accum + (i - m) ** 2 }
+      sum / (self.length - 1).to_f
+    end
+
+    def sd
+      Math.sqrt(self.sample_variance)
+    end
+
+end 
 
 module Avsd
 	def self.hello
@@ -55,46 +76,58 @@ end
 class Labeled_matrix
 	def initialize(labels)
 		@labels = labels
-		@mat = Matrix.unit(labels.length)
+		@co_mat = Matrix.unit(labels.length)
 	end
 
 	def band label1, label2
-		@mat[@labels.index(label1), @labels.index(label2)] += 1
+		@co_mat[@labels.index(label1), @labels.index(label2)] += 1
 	end
 
-	attr_accessor :mat, :labels
+	def band_matrix records
+		@labels.each do |label_a|
+			records.each do |record|
+				if record.include? label
+					record.each do |label_b|
+						band(label_a, label_b)
+					end
+				end
+			end
+		end
+		@co_mat.fold
+	end
+
+	def g_short_mat
+		@short_mat = dijkstra_all @co_mat
+	end
+
+	def sample num
+		arr = Array.new(@short_mat.column_size) { |idx| idx }
+		set = arr.sample 4
+		arr = []
+		set.length.times do |i|
+			for k in i + 1..set.length - 1
+				arr << [set[i], set[k]]
+			end
+		end
+		# debug
+		sampled_labels = Hash.new
+		set.each do |i|
+			sampled_labels[@labels[set[i]]] = set[i]
+		end
+		[sampled_labels, arr.mean, arr.sd].inspect
+	end
+
+	attr_accessor :short_mat, :co_mat, :labels
 end
 
 def all_record
 	# db = SQLite3::Database.new("database.db")
-	[[2,4,6],[2,2,4],[2,1,3,4,5],[2,3,4],[3]]
+	[['a','b','c'],['a','b'],['a','b'],['b','c'],['c','d','e','f']]
 end
 
-def unique_labels
+def unique_labels all_record
 	all_record.flatten.uniq
 end
-
-def g_matrix
-	Labeled_matrix.new unique_labels
-end
-
-
-def band_matrix labeled_mat, all_record
-	labeled_mat.labels.each do |label|
-		all_record.each do |record|
-			if record.include? label
-				record.each do |tar_label|
-					labeled_mat.band(label, tar_label)
-				end
-			end
-		end
-	end
-	labeled_mat.fold
-end
-
-
-mat = Matrix.unit(5)
-
 
 def dijkstra_all dist_mat
 	short_mat = Matrix.zero(dist_mat.column_size)
@@ -120,8 +153,28 @@ end
 
 def sample short_mat, num
 	arr = Array.new(short_mat.column_size) { |idx| idx }
-	set = arr.sample(num)
-	set.
+	set = arr.sample 4
+	arr = []
+	set.length.times do |i|
+		for k in i + 1..set.length - 1
+			arr << [set[i], set[k]]
+		end
+	end
+	[set, arr.mean, arr.sd].inspect
 end
 
-sample Matrix.unit(5), 3
+# class Avsd
+# 	include Avsd
+# 	cooccurance_matrix = all_record.unique_words.g_matrix.band
+# 	dist_matrix = cooccurance_matrix.dik_matrix
+# 	sample dist_matrix, 3
+# end
+
+records = all_record
+labeled_mat = Labeled_matrix.new unique_labels(records)
+labeled_mat.band records
+labeled_mat.g_short_mat
+puts sample short_mat, 3
+
+
+
