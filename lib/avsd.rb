@@ -58,6 +58,16 @@ class Matrix
 		self
 	end
 
+	def mirror_diagonal
+		self.fold
+		for col in 0..self.column_size - 1
+			for row in 0..self.row_size - 1
+				self[col, row] /= 2.0
+			end
+		end
+		self
+	end
+
 	def zero_diagonal
 		for col in 0..self.column_size - 1
 			self[col, col] = 0
@@ -86,14 +96,14 @@ class Labeled_matrix
 	def band_matrix records
 		@labels.each do |label_a|
 			records.each do |record|
-				if record.include? label
+				if record.include? label_a
 					record.each do |label_b|
 						band(label_a, label_b)
 					end
 				end
 			end
 		end
-		@co_mat.fold
+		@co_mat.mirror_diagonal.zero_diagonal
 	end
 
 	def g_short_mat
@@ -109,12 +119,18 @@ class Labeled_matrix
 				arr << [set[i], set[k]]
 			end
 		end
+		puts "LABELS"
+		@labels.inspect
 		# debug
 		sampled_labels = Hash.new
-		set.each do |i|
-			sampled_labels[@labels[set[i]]] = set[i]
+		set.each do |id|
+			sampled_labels[@labels[id]] = id
 		end
-		[sampled_labels, arr.mean, arr.sd].inspect
+		vals = []
+		arr.each do |id_set|
+			vals << @short_mat[id_set[0], id_set[1]]
+		end
+		[sampled_labels, vals.mean, vals.sd].inspect
 	end
 
 	attr_accessor :short_mat, :co_mat, :labels
@@ -122,7 +138,7 @@ end
 
 def all_record
 	# db = SQLite3::Database.new("database.db")
-	[['a','b','c'],['a','b'],['a','b'],['b','c'],['c','d','e','f']]
+	[['a','b'], ['a','c'], ['a','d'], ['b','e'], ['e','f']]
 end
 
 def unique_labels all_record
@@ -142,25 +158,13 @@ def dijkstra_all dist_mat
 			short_mat.show
 			dist_mat.row(f[0]).each_with_index do |val, i|
 				next if i == f[0] or val == 0 or short_mat[s_id, i] != nil
-				if q[i] == nil or q[i] > f[1] + val
+				if q[i] == nil or q[i] < f[1] + val
 					q[i] = f[1] + val
 				end
 			end
 		end
 	end
 	short_mat
-end
-
-def sample short_mat, num
-	arr = Array.new(short_mat.column_size) { |idx| idx }
-	set = arr.sample 4
-	arr = []
-	set.length.times do |i|
-		for k in i + 1..set.length - 1
-			arr << [set[i], set[k]]
-		end
-	end
-	[set, arr.mean, arr.sd].inspect
 end
 
 # class Avsd
@@ -171,10 +175,13 @@ end
 # end
 
 records = all_record
+
 labeled_mat = Labeled_matrix.new unique_labels(records)
-labeled_mat.band records
+labeled_mat.co_mat.show
+
+labeled_mat.band_matrix records
+labeled_mat.co_mat.show
+
 labeled_mat.g_short_mat
-puts sample short_mat, 3
-
-
+puts labeled_mat.sample 5
 
