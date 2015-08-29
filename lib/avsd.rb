@@ -164,5 +164,5 @@ module Avsd
 end
 
 
-avsd = Avsd::Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
-puts avsd.sample 3
+# avsd = Avsd::Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
+# puts avsd.sample 3
