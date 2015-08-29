@@ -1,8 +1,6 @@
 # Avsd
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/avsd`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Avsd is AVSD Recommend Algorithm implimatation on Ruby gem. AVSD Recommend Algorithm recommends sets of items based on multiple exisiting sets of items.
 
 ## Installation
 
@@ -22,7 +20,12 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+avsd = Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
+avsd.sample 3
+# [{"tomato"=>6, "garlic"=>7, "curry paste"=>3}, [2.0, 6.0, 6.0], 4.666666666666667, 1.8856180831641267]
+# Here the creativity is 1.8 / 4.6 = 0.3
+```
 
 ## Development
 
@@ -32,5 +35,5 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/avsd.
+Bug reports and pull requests are welcome on GitHub at https://github.com/arcoyk/avsd.
 

@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{ Avsd recommend engine }
   spec.description   = %q{ Avsd recommends items based on input items. }
-  spec.homepage      = "http://list.xyz/avsdrecommend"
+  spec.homepage      = "http://github.com/arcoyk/avsd"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
