@@ -3,95 +3,96 @@ require "sqlite3"
 require "matrix"
 require "priority_queue"
 
+
+class Matrix
+	def []=(i, j, x)
+	@rows[i][j] = x
+	end
+
+	def fold
+		for col in 0..self.column_size - 1
+			for row in col..self.row_size - 1
+				sum = self[row, col] + self[col, row]
+				self[row, col] = sum
+				self[col, row] = sum
+			end
+		end
+		self
+	end
+
+	def show
+		puts [self.column_size, self.row_size].inspect
+		for col in 0..self.column_size - 1
+			for row in 0..self.row_size - 1
+				print self[row, col] == nil ? "n" : self[row, col]
+				print "  "
+			end
+			puts
+		end
+		self
+	end
+
+	def mirror_diagonal
+		self.fold
+		for col in 0..self.column_size - 1
+			for row in 0..self.row_size - 1
+				self[col, row] /= 2.0
+			end
+		end
+		self
+	end
+
+	def zero_diagonal
+		for col in 0..self.column_size - 1
+			self[col, col] = 0
+		end
+		self
+	end
+
+	def flip
+		m = self.flatten.max + 1
+		for col in 0..self.column_size - 1
+			for row in 0..self.row_size - 1
+				next if self[col, row] == 0
+				self[col, row] -= m
+				self[col, row] *= -1
+			end
+		end
+		self
+	end
+
+	def flatten
+		arr = []
+		for col in 0..self.column_size - 1
+			for row in 0..self.row_size - 1
+				arr << self[col, row]
+			end
+		end
+		arr
+	end
+end
+
+class Array
+    def sum
+      self.reduce(0) { |accum, i| accum + i }
+    end
+
+    def mean
+      self.sum / self.length.to_f
+    end
+
+    def sample_variance
+      m = self.mean
+      sum = self.reduce(0) { |accum, i| accum + (i - m) ** 2 }
+      sum / self.length.to_f
+    end
+
+    def sd
+      Math.sqrt(self.sample_variance)
+    end
+end
+
 module Avsd
-	class Matrix
-		def []=(i, j, x)
-		@rows[i][j] = x
-		end
-
-		def fold
-			for col in 0..self.column_size - 1
-				for row in col..self.row_size - 1
-					sum = self[row, col] + self[col, row]
-					self[row, col] = sum
-					self[col, row] = sum
-				end
-			end
-			self
-		end
-
-		def show
-			puts [self.column_size, self.row_size].inspect
-			for col in 0..self.column_size - 1
-				for row in 0..self.row_size - 1
-					print self[row, col] == nil ? "n" : self[row, col]
-					print "  "
-				end
-				puts
-			end
-			self
-		end
-
-		def mirror_diagonal
-			self.fold
-			for col in 0..self.column_size - 1
-				for row in 0..self.row_size - 1
-					self[col, row] /= 2.0
-				end
-			end
-			self
-		end
-
-		def zero_diagonal
-			for col in 0..self.column_size - 1
-				self[col, col] = 0
-			end
-			self
-		end
-
-		def flip
-			m = self.flatten.max + 1
-			for col in 0..self.column_size - 1
-				for row in 0..self.row_size - 1
-					next if self[col, row] == 0
-					self[col, row] -= m
-					self[col, row] *= -1
-				end
-			end
-			self
-		end
-
-		def flatten
-			arr = []
-			for col in 0..self.column_size - 1
-				for row in 0..self.row_size - 1
-					arr << self[col, row]
-				end
-			end
-			arr
-		end
-	end
-
-	class Array
-	    def sum
-	      self.reduce(0) { |accum, i| accum + i }
-	    end
-
-	    def mean
-	      self.sum / self.length.to_f
-	    end
-
-	    def sample_variance
-	      m = self.mean
-	      sum = self.reduce(0) { |accum, i| accum + (i - m) ** 2 }
-	      sum / self.length.to_f
-	    end
-
-	    def sd
-	      Math.sqrt(self.sample_variance)
-	    end
-	end
-
 	class Avsd
 		def initialize(records)
 			@labels = records.flatten.uniq
@@ -163,5 +164,5 @@ module Avsd
 end
 
 
-# avsd = Avsd::Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
-# puts avsd.sample 3
+avsd = Avsd::Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
+puts avsd.sample 3
