@@ -23,7 +23,7 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-avsd = Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
+avsd = Avsd::Avsd.new [['carotte','potate','beaf','curry paste'],['beaf','potates','oregano'],['oregano', 'tomato', 'garlic']]
 avsd.sample 3
 # [{"tomato"=>6, "garlic"=>7, "curry paste"=>3}, [2.0, 6.0, 6.0], 4.666666666666667, 1.8856180831641267]
 # Here the creativity is 1.8 / 4.6 = 0.3
