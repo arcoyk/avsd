@@ -2,7 +2,7 @@
 
 ###THIS GEM IS UNDEREXPERIMENT
 
-Avsd is AVSD Recommend Algorithm implimatation on Ruby gem. AVSD Recommend Algorithm recommends sets of items based on multiple exisiting sets of items.
+Avsd is AVSD Recommend Algorithm implimatation on Ruby gem. AVSD Recommend Algorithm recommends sets of items based on multiple exisiting sets of items with a measure of creativity.
 
 ## Installation
 
